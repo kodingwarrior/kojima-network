@@ -44,6 +44,7 @@ module "kojima_feed" {
   source = "./modules/kojima-feed"
 
   public_key_for_kojima_feed = local_file.public_key_for_kojima_network.content
+  private_key_for_kojima_feed = local_file.private_key_for_kojima_network.content
 
   subnetwork       = module.core.google_compute_subnetwork["kojima_network_subnet_prod"]
   nat_ip           = module.core.google_compute_address["kojima_network_subnet_prod"]

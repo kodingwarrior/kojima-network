@@ -1,4 +1,5 @@
 variable "public_key_for_kojima_feed" {}
+variable "private_key_for_kojima_feed" {}
 variable "subnetwork" {}
 variable "nat_ip" {}
 
@@ -26,27 +27,34 @@ resource "google_compute_instance" "kojima_feed_main_prod" {
     ssh-keys = "kojima-feed:${var.public_key_for_kojima_feed}"
   }
 
-  
-  metadata_startup_script = <<EOT
+  provisioner "remote-exec" {
+    connection {
+	  type = "ssh"
+	  user = "kojima-feed"
+	  host = var.nat_ip.address
+	  private_key = var.private_key_for_kojima_feed
+	}
+    inline = [
       # releasing lock
-      sudo rm /var/lib/apt/lists/lock
+      "sudo rm /var/lib/apt/lists/lock",
 
       # Adding Docker's official GPG Key
-      sudo apt-get update
-      sudo apt-get -y install ca-certificates curl
-      sudo install -m 0755 -d /etc/apt/keyrings
-      sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-      sudo chmod a+r /etc/apt/keyrings/docker.asc
+      "sudo apt-get update",
+      "sudo apt-get -y install ca-certificates curl",
+      "sudo install -m 0755 -d /etc/apt/keyrings",
+      "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc",
+      "sudo chmod a+r /etc/apt/keyrings/docker.asc",
 
       # Add repository to Apt source
-      echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-      sudo apt-get update
-      sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
+      "sudo apt-get update",
+      "sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
 
       # Build docker private network
-      sudo usermod -a -G sudo,docker ubuntu
-      docker network create -d bridge private
+      "sudo usermod -a -G sudo,docker kojima-feed",
+      "sudo docker network create -d bridge private",
 
-      sudo chmod 600 /home/ubuntu/.ssh/*
-  EOT
+      "sudo chmod 600 /home/kojima-feed/.ssh/*",
+    ]
+  } 
 }

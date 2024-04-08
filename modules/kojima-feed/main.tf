@@ -16,7 +16,7 @@ resource "google_compute_instance" "kojima_feed_main_prod" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-12"
+      image = "ubuntu-2204-jammy-v20240319"
     }
   }
 

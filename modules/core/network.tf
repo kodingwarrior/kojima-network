@@ -41,6 +41,20 @@ resource "google_compute_firewall" "kojima_network_prod_allow_http" {
   target_tags   = ["allow-http"]
 }
 
+resource "google_compute_firewall" "kojima_network_prod_allow_https" {
+  name        = "kojima-network-prod-allow-https"
+  network     = google_compute_network.kojima_network_prod.name
+  description = "Allow https from anywhere"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["allow-https"]
+}
+
 resource "google_compute_firewall" "kojima_network_prod_allow_postgres" {
   name        = "kojima-network-prod-allow-postgres"
   network     = google_compute_network.kojima_network_prod.name

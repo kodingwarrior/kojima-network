@@ -18,10 +18,11 @@ resource "google_compute_instance" "kojima_feed_main_prod" {
   boot_disk {
     initialize_params {
       image = "ubuntu-2204-jammy-v20240319"
+	  size = 20
     }
   }
 
-  tags = ["allow-http", "allow-ssh"]
+  tags = ["allow-http", "allow-ssh", "allow-postgres"]
 
   metadata = {
     ssh-keys = "kojima-feed:${var.public_key_for_kojima_feed}"

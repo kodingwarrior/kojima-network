@@ -22,7 +22,7 @@ resource "google_compute_instance" "kojima_feed_main_prod" {
     }
   }
 
-  tags = ["allow-http", "allow-ssh", "allow-postgres"]
+  tags = ["allow-http", "allow-ssh", "allow-postgres", "allow-https"]
 
   metadata = {
     ssh-keys = "kojima-feed:${var.public_key_for_kojima_feed}"

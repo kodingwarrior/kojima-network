@@ -9,3 +9,9 @@ output "google_compute_address" {
     "kojima_network_subnet_prod" : google_compute_address.kojima_network_subnet_prod
   }
 }
+
+output "google_compute_network" {
+  value = {
+	"kojima_network_prod" : google_compute_network.kojima_network_prod
+  }
+}

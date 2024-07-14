@@ -49,3 +49,12 @@ module "kojima_feed" {
   subnetwork       = module.core.google_compute_subnetwork["kojima_network_subnet_prod"]
   nat_ip           = module.core.google_compute_address["kojima_network_subnet_prod"]
 }
+
+module "kojima_memedex" {
+  source = "./modules/kojima-memedex"
+
+  kojima_network = module.core.google_compute_network["kojima_network_prod"]
+
+  public_key_for_kojima_memedex = local_file.public_key_for_kojima_network.content
+  private_key_for_kojima_memedex = local_file.private_key_for_kojima_network.content
+}
